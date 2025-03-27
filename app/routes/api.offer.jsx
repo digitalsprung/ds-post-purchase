@@ -1,5 +1,5 @@
 import { authenticate } from "../shopify.server";
-import { getOffers } from "../models/offer.server";
+import { getOffers } from "../offer.server";
 import { json } from "@remix-run/react";
 
 /**

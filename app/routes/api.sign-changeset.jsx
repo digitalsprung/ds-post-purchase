@@ -1,9 +1,8 @@
 import { json } from "@remix-run/node";
 import { v4 as uuidv4 } from "uuid";
 import jwt from "jsonwebtoken";
-
 import { authenticate } from "../shopify.server";
-import { getSelectedOffer } from "../models/offer.server";
+import { getSelectedOffer } from "../offer.server";
 
 /**
  * Loader handles preflight requests from Shopify
