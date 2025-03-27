@@ -1,7 +1,7 @@
 # Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
 
 client_id = "e5fc0a4a833cebabde7e223a80e6002f"
-application_url = "https://domains-edit-installed-undefined.trycloudflare.com"
+application_url = "https://despite-gel-upgrading-offerings.trycloudflare.com"
 embedded = true
 name = "ds-post-purchase"
 handle = "ds-post-purchase"
@@ -9,11 +9,11 @@ handle = "ds-post-purchase"
 [webhooks]
 api_version = "2025-01"
 
-[[webhooks.subscriptions]]
+  [[webhooks.subscriptions]]
   topics = [ "app/uninstalled" ]
   uri = "/webhooks/app/uninstalled"
 
-[[webhooks.subscriptions]]
+  [[webhooks.subscriptions]]
   topics = [ "app/scopes_update" ]
   uri = "/webhooks/app/scopes_update"
 
@@ -23,9 +23,9 @@ scopes = "write_products"
 
 [auth]
 redirect_urls = [
-  "https://domains-edit-installed-undefined.trycloudflare.com/auth/callback",
-  "https://domains-edit-installed-undefined.trycloudflare.com/auth/shopify/callback",
-  "https://domains-edit-installed-undefined.trycloudflare.com/api/auth/callback"
+  "https://despite-gel-upgrading-offerings.trycloudflare.com/auth/callback",
+  "https://despite-gel-upgrading-offerings.trycloudflare.com/auth/shopify/callback",
+  "https://despite-gel-upgrading-offerings.trycloudflare.com/api/auth/callback"
 ]
 
 [pos]
@@ -35,3 +35,7 @@ embedded = false
 dev_store_url = "digitalsprung-theme.myshopify.com"
 automatically_update_urls_on_dev = true
 include_config_on_deploy = true
+
+
+
+# https://ai-content-tool.ds-apps.de

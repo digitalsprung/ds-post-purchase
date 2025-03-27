@@ -17,7 +17,7 @@ import {
 } from "@shopify/post-purchase-ui-extensions-react";
 
 // Updated to use the deployed app URL
-const APP_URL = "http://s8wccg0o80kgo0oc8c0ows84.91.107.219.207.sslip.io";
+const APP_URL = "https://ai-content-tool.ds-apps.de";
 
 // Preload data from your app server to ensure that the extension loads quickly.
 extend(

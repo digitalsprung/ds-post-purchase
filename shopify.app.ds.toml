@@ -1,14 +1,14 @@
 # Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
 
 client_id = "e5fc0a4a833cebabde7e223a80e6002f"
-application_url = "https://s8wccg0o80kgo0oc8c0ows84.91.107.219.207.sslip.io"
+application_url = "https://ai-content-tool.ds-apps.de"
 embedded = true
 name = "ds-post-purchase"
 handle = "ds-post-purchase"
 
 [build]
 automatically_update_urls_on_dev = false
-dev_store_url = "https://s8wccg0o80kgo0oc8c0ows84.91.107.219.207.sslip.io"
+dev_store_url = "https://ai-content-tool.ds-apps.de"
 include_config_on_deploy = true
 
 [access_scopes]
@@ -17,9 +17,9 @@ scopes = "write_products"
 
 [auth]
 redirect_urls = [
-  "https://s8wccg0o80kgo0oc8c0ows84.91.107.219.207.sslip.io/auth/callback",
-  "https://s8wccg0o80kgo0oc8c0ows84.91.107.219.207.sslip.io/auth/shopify/callback",
-  "https://s8wccg0o80kgo0oc8c0ows84.91.107.219.207.sslip.io/api/auth/callback"
+  "https://ai-content-tool.ds-apps.de/auth/callback",
+  "https://ai-content-tool.ds-apps.de/auth/shopify/callback",
+  "https://ai-content-tool.ds-apps.de/api/auth/callback"
 ]
 
 
