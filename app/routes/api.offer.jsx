@@ -17,5 +17,7 @@ export const action = async ({ request }) => {
   const { cors } = await authenticate.public(request);
 
   const offers = getOffers();
+  console.log(offers);
+  
   return cors(json({ offers }));
 };

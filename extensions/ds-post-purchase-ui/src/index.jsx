@@ -17,26 +17,59 @@ import {
 } from "@shopify/post-purchase-ui-extensions-react";
 
 // Updated to use the deployed app URL
-const APP_URL = "https://ai-content-tool.ds-apps.de";
+const APP_URL = "https://ai-content-tool.ds-apps.de"
 
 // Preload data from your app server to ensure that the extension loads quickly.
 extend(
   "Checkout::PostPurchase::ShouldRender",
   async ({ inputData, storage }) => {
-    const postPurchaseOffer = await fetch(`${APP_URL}/api/offer`, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${inputData.token}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        referenceId: inputData.initialPurchase.referenceId,
-      }),
-    }).then((response) => response.json());
+    try {
+      const postPurchaseOffer = await fetch(`${APP_URL}/api/offer`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${inputData.token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          referenceId: inputData.initialPurchase.referenceId,
+        }),
+      }).then((response) => response.json());
 
-    await storage.update(postPurchaseOffer);
+      await storage.update(postPurchaseOffer);
+    } catch (error) {
+      console.error("Error fetching offers:", error);
+      // Fallback offer data
+      await storage.update({
+        offers: [
+          {
+            id: 1,
+            title: "15% off",
+            productTitle: "Adaptil Halsband Gr. S für Welpen und kleine Hunde",
+            productImageURL:
+              "https://cdn.shopify.com/s/files/1/0677/3830/4797/files/full_adaptilcalmhalsbandsm.png?v=1732896539",
+            productDescription: [
+              "Adaptil Halsband Gr. S für Welpen und kleine Hunde",
+            ],
+            originalPrice: "20.00",
+            discountedPrice: "17.00",
+            changes: [
+              {
+                type: "add_variant",
+                variantID: 49416542650653, // Replace with your actual variant ID
+                quantity: 1,
+                discount: {
+                  value: 15,
+                  valueType: "percentage",
+                  title: "15% off",
+                },
+              },
+            ],
+          },
+        ],
+      });
+    }
 
-    // For local development, always show the post-purchase page
+    // Immer die Post-Purchase UI anzeigen für Testzwecke
     return { render: true };
   },
 );
@@ -93,7 +126,7 @@ export function App() {
       },
       body: JSON.stringify({
         referenceId: inputData.initialPurchase.referenceId,
-        changes: purchaseOption.id,
+        changes: purchaseOption.id, // Sende die ID, das Backend holt die Änderungen
       }),
     })
       .then((response) => response.json())

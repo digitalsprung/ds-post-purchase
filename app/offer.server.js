@@ -41,9 +41,19 @@ export function getOffers() {
 /**
  * Get a specific offer by ID
  *
- * @param {number} offerId - The ID of the offer to retrieve
+ * @param {number|string} offerId - The ID of the offer to retrieve
  * @returns {Object|undefined} The offer object or undefined if not found
  */
 export function getSelectedOffer(offerId) {
-  return OFFERS.find((offer) => offer.id === offerId);
+  console.log("Looking for offer with ID:", offerId, "Type:", typeof offerId);
+  console.log("Available offers:", OFFERS);
+  
+  // Konvertiere offerId zu einer Zahl, falls es ein String ist
+  const id = parseInt(offerId, 10);
+  
+  // Finde das Angebot mit der passenden ID
+  const offer = OFFERS.find((offer) => offer.id === id);
+  console.log("Found offer:", offer);
+  
+  return offer;
 }

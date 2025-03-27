@@ -1,7 +1,7 @@
 # Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
 
 client_id = "e5fc0a4a833cebabde7e223a80e6002f"
-application_url = "https://despite-gel-upgrading-offerings.trycloudflare.com"
+application_url = "https://skilled-reasonably-kick-epic.trycloudflare.com"
 embedded = true
 name = "ds-post-purchase"
 handle = "ds-post-purchase"
@@ -23,9 +23,9 @@ scopes = "write_products"
 
 [auth]
 redirect_urls = [
-  "https://despite-gel-upgrading-offerings.trycloudflare.com/auth/callback",
-  "https://despite-gel-upgrading-offerings.trycloudflare.com/auth/shopify/callback",
-  "https://despite-gel-upgrading-offerings.trycloudflare.com/api/auth/callback"
+  "https://skilled-reasonably-kick-epic.trycloudflare.com/auth/callback",
+  "https://skilled-reasonably-kick-epic.trycloudflare.com/auth/shopify/callback",
+  "https://skilled-reasonably-kick-epic.trycloudflare.com/api/auth/callback"
 ]
 
 [pos]
@@ -35,7 +35,3 @@ embedded = false
 dev_store_url = "digitalsprung-theme.myshopify.com"
 automatically_update_urls_on_dev = true
 include_config_on_deploy = true
-
-
-
-# https://ai-content-tool.ds-apps.de
