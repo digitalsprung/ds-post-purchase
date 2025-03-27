@@ -1,18 +1,6 @@
 import { useEffect } from "react";
 import { useFetcher } from "@remix-run/react";
-import {
-  Page,
-  Layout,
-  Text,
-  Card,
-  Button,
-  BlockStack,
-  Box,
-  List,
-  Link,
-  InlineStack,
-  DataTable,
-} from "@shopify/polaris";
+import { Page, Layout, BlockStack, DataTable } from "@shopify/polaris";
 import { TitleBar, useAppBridge } from "@shopify/app-bridge-react";
 import { authenticate } from "../shopify.server";
 

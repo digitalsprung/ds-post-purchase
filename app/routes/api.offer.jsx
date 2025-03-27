@@ -1,7 +1,6 @@
-import { json } from "@remix-run/node";
-
 import { authenticate } from "../shopify.server";
 import { getOffers } from "../models/offer.server";
+import { json } from "@remix-run/react";
 
 /**
  * Loader handles preflight requests from Shopify

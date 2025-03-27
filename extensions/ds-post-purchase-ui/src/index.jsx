@@ -16,8 +16,8 @@ import {
   Layout,
 } from "@shopify/post-purchase-ui-extensions-react";
 
-// For local development, replace APP_URL with your local tunnel URL.
-const APP_URL = "https://digitalsprung-theme.myshopify.com";
+// Updated to use the deployed app URL
+const APP_URL = "http://s8wccg0o80kgo0oc8c0ows84.91.107.219.207.sslip.io";
 
 // Preload data from your app server to ensure that the extension loads quickly.
 extend(
