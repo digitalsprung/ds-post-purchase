@@ -1,30 +1,25 @@
 import { json } from "@remix-run/node";
+
 import { authenticate } from "../shopify.server";
 import { getOffers } from "../offer.server";
 
-// Der Loader behandelt Preflight-Anfragen von Shopify
-export const loader = async ({ request }) => {
-  const { cors } = await authenticate.public(request);
-  return cors(json({}));
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*", // Or restrict to specific origins for better security
+  "Access-Control-Allow-Methods": "GET, POST, OPTIONS", // Specify allowed methods
+  "Access-Control-Allow-Headers": "Content-Type, Authorization", // Specify allowed headers
 };
 
-// Der Action-Handler verarbeitet POST-Anfragen von der Extension
+// The loader responds to preflight requests from Shopify
+export const loader = async ({ request }) => {
+  const { cors } = await authenticate.public(request);
+
+  return cors(json({ message: "Hello World!" }), { headers: corsHeaders });
+};
+
+// The action responds to the POST request from the extension. Make sure to use the cors helper for the request to work.
 export const action = async ({ request }) => {
   const { cors } = await authenticate.public(request);
 
-  try {
-    const offers = getOffers();
-    console.log("Verfügbare Angebote:", offers.length);
-    return cors(json({ offers }));
-  } catch (error) {
-    console.error("Fehler beim Abrufen der Angebote:", error);
-    return cors(
-      json(
-        {
-          errors: [{ code: "server_error", message: "Interner Serverfehler" }],
-        },
-        { status: 500 },
-      ),
-    );
-  }
+  const offers = getOffers();
+  return cors(json({ offers }), { headers: corsHeaders });
 };

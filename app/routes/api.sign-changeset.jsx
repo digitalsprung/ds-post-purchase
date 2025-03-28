@@ -4,64 +4,35 @@ import jwt from "jsonwebtoken";
 import { authenticate } from "../shopify.server";
 import { getSelectedOffer } from "../offer.server";
 
-// Der Loader behandelt Preflight-Anfragen von Shopify
-export const loader = async ({ request }) => {
-  const { cors } = await authenticate.public(request);
-  return cors(json({}));
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*", // Or restrict to specific origins for better security
+  "Access-Control-Allow-Methods": "GET, POST, OPTIONS", // Specify allowed methods
+  "Access-Control-Allow-Headers": "Content-Type, Authorization", // Specify allowed headers
 };
 
-// Der Action-Handler verarbeitet POST-Anfragen von der Extension
+// The loader responds to preflight requests from Shopify
+export const loader = async ({ request }) => {
+  const { cors } = await authenticate.public(request);
+
+  return cors(json({ message: "Hello World!" }), { headers: corsHeaders });
+};
+
+// The action responds to the POST request from the extension. Make sure to use the cors helper for the request to work.
 export const action = async ({ request }) => {
   const { cors } = await authenticate.public(request);
 
-  try {
-    const body = await request.json();
+  const body = await request.json();
 
-    // Hole das ausgewählte Angebot anhand der ID
-    const selectedOffer = getSelectedOffer(body.changes);
-    console.log(
-      "Angebot gefunden:",
-      selectedOffer ? "Ja" : "Nein",
-      "ID:",
-      body.changes,
-    );
+  const selectedOffer = getSelectedOffer(body.changes);
 
-    // Fallback für den Fall, dass keine Änderungen gefunden wurden
-    const changes = selectedOffer?.changes || [
-      {
-        type: "add_variant",
-        variantID: 49416542650653,
-        quantity: 1,
-        discount: {
-          value: 15,
-          valueType: "percentage",
-          title: "15% off",
-        },
-      },
-    ];
+  const payload = {
+    iss: process.env.SHOPIFY_API_KEY,
+    jti: uuidv4(),
+    iat: Date.now(),
+    sub: body.referenceId,
+    changes: selectedOffer?.changes,
+  };
 
-    // JWT-Payload erstellen
-    const payload = {
-      iss: process.env.SHOPIFY_API_KEY,
-      jti: uuidv4(),
-      iat: Math.floor(Date.now() / 1000), // Unix-Timestamp in Sekunden
-      sub: body.referenceId,
-      changes: changes,
-    };
-
-    // Token signieren und zurückgeben
-    const token = jwt.sign(payload, process.env.SHOPIFY_API_SECRET);
-    return cors(json({ token }));
-  } catch (error) {
-    console.error("Fehler bei der Verarbeitung:", error);
-    return cors(
-      json(
-        {
-          errors: [{ code: "server_error", message: "Interner Serverfehler" }],
-          status: "unprocessed",
-        },
-        { status: 500 },
-      ),
-    );
-  }
+  const token = jwt.sign(payload, process.env.SHOPIFY_API_SECRET);
+  return cors(json({ token }), { headers: corsHeaders });
 };
