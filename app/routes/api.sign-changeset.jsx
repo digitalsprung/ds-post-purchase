@@ -1,14 +1,23 @@
 import { json } from "@remix-run/node";
 import { v4 as uuidv4 } from "uuid";
 import jwt from "jsonwebtoken";
-import { unauthenticated } from "../shopify.server";
+import { authenticate } from "../shopify.server";
 import { getSelectedOffer } from "../offer.server";
+import { corsHeaders } from "../utils/cors.server";
 
 /**
  * Loader handles preflight requests from Shopify
  */
 export const loader = async ({ request }) => {
-  return await unauthenticated.loader({ request });
+  // Für OPTIONS Preflight-Anfragen
+  if (request.method === "OPTIONS") {
+    return new Response(null, {
+      headers: corsHeaders,
+    });
+  }
+
+  await authenticate.public(request);
+  return json({}, { headers: corsHeaders });
 };
 
 /**
@@ -16,7 +25,7 @@ export const loader = async ({ request }) => {
  * Signs the changeset to verify the request came from your app
  */
 export const action = async ({ request }) => {
-  const { cors } = await unauthenticated.action({ request });
+  const { cors } = await authenticate.public(request);
 
   try {
     const body = await request.json();
@@ -35,7 +44,7 @@ export const action = async ({ request }) => {
             ],
             status: "unprocessed",
           },
-          { status: 400 },
+          { status: 400, headers: corsHeaders },
         ),
       );
     }
@@ -84,7 +93,7 @@ export const action = async ({ request }) => {
     console.log("Final payload:", JSON.stringify(payload, null, 2));
 
     const token = jwt.sign(payload, process.env.SHOPIFY_API_SECRET);
-    return cors(json({ token }));
+    return cors(json({ token }, { headers: corsHeaders }));
   } catch (error) {
     console.error("Error processing request:", error);
     return cors(
@@ -93,7 +102,7 @@ export const action = async ({ request }) => {
           errors: [{ code: "server_error", message: "Internal server error" }],
           status: "unprocessed",
         },
-        { status: 500 },
+        { status: 500, headers: corsHeaders },
       ),
     );
   }
