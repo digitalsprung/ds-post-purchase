@@ -40,7 +40,11 @@ if (host === "localhost") {
 export default defineConfig({
   server: {
     allowedHosts: [host],
-    cors: true,
+    cors: {
+      origin: '*',
+      methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
+      credentials: true
+    },
     port: Number(process.env.PORT || 3000),
     hmr: hmrConfig,
     fs: {
