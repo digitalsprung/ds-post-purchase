@@ -3,72 +3,30 @@ import { v4 as uuidv4 } from "uuid";
 import jwt from "jsonwebtoken";
 import { authenticate } from "../shopify.server";
 import { getSelectedOffer } from "../offer.server";
-import { corsHeaders } from "../utils/cors.server";
 
-/**
- * Loader handles preflight requests from Shopify
- */
+// Der Loader behandelt Preflight-Anfragen von Shopify
 export const loader = async ({ request }) => {
-  // Für OPTIONS Preflight-Anfragen
-  if (request.method === "OPTIONS") {
-    return new Response(null, {
-      headers: corsHeaders,
-    });
-  }
-
-  await authenticate.public(request);
-  return json({}, { headers: corsHeaders });
+  const { cors } = await authenticate.public(request);
+  return cors(json({}));
 };
 
-/**
- * Action responds to POST requests from the extension
- * Signs the changeset to verify the request came from your app
- */
+// Der Action-Handler verarbeitet POST-Anfragen von der Extension
 export const action = async ({ request }) => {
   const { cors } = await authenticate.public(request);
 
   try {
     const body = await request.json();
-    console.log("Received request body:", JSON.stringify(body, null, 2));
 
-    if (!body.referenceId) {
-      console.error("Missing referenceId in request");
-      return cors(
-        json(
-          {
-            errors: [
-              {
-                code: "invalid_request",
-                message: "Reference ID must be supplied",
-              },
-            ],
-            status: "unprocessed",
-          },
-          { status: 400, headers: corsHeaders },
-        ),
-      );
-    }
-
-    // Hole die Änderungen anhand der ID aus dem Backend
+    // Hole das ausgewählte Angebot anhand der ID
     const selectedOffer = getSelectedOffer(body.changes);
-
-    console.log("Selected Offer:", selectedOffer);
     console.log(
-      "Offer ID received:",
+      "Angebot gefunden:",
+      selectedOffer ? "Ja" : "Nein",
+      "ID:",
       body.changes,
-      "Type:",
-      typeof body.changes,
     );
 
-    // Wenn kein Angebot gefunden wurde, verwende Fallback-Änderungen
-    if (!selectedOffer) {
-      console.warn(
-        "No offer found with ID:",
-        body.changes,
-        "Using fallback changes",
-      );
-    }
-
+    // Fallback für den Fall, dass keine Änderungen gefunden wurden
     const changes = selectedOffer?.changes || [
       {
         type: "add_variant",
@@ -82,27 +40,27 @@ export const action = async ({ request }) => {
       },
     ];
 
+    // JWT-Payload erstellen
     const payload = {
       iss: process.env.SHOPIFY_API_KEY,
       jti: uuidv4(),
-      iat: Math.floor(Date.now() / 1000), // Unix timestamp in seconds
+      iat: Math.floor(Date.now() / 1000), // Unix-Timestamp in Sekunden
       sub: body.referenceId,
-      changes: changes, // Verwende die Änderungen aus dem Backend oder Fallback
+      changes: changes,
     };
 
-    console.log("Final payload:", JSON.stringify(payload, null, 2));
-
+    // Token signieren und zurückgeben
     const token = jwt.sign(payload, process.env.SHOPIFY_API_SECRET);
-    return cors(json({ token }, { headers: corsHeaders }));
+    return cors(json({ token }));
   } catch (error) {
-    console.error("Error processing request:", error);
+    console.error("Fehler bei der Verarbeitung:", error);
     return cors(
       json(
         {
-          errors: [{ code: "server_error", message: "Internal server error" }],
+          errors: [{ code: "server_error", message: "Interner Serverfehler" }],
           status: "unprocessed",
         },
-        { status: 500, headers: corsHeaders },
+        { status: 500 },
       ),
     );
   }

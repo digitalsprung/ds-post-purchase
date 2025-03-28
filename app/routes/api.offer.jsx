@@ -1,44 +1,29 @@
+import { json } from "@remix-run/node";
 import { authenticate } from "../shopify.server";
 import { getOffers } from "../offer.server";
-import { json } from "@remix-run/node";
-import { corsHeaders } from "../utils/cors.server";
 
-/**
- * Loader handles preflight requests from Shopify
- */
+// Der Loader behandelt Preflight-Anfragen von Shopify
 export const loader = async ({ request }) => {
-  // Für OPTIONS Preflight-Anfragen
-  if (request.method === "OPTIONS") {
-    return new Response(null, {
-      headers: corsHeaders,
-    });
-  }
-
-  await authenticate.public(request);
-  return json({}, { headers: corsHeaders });
+  const { cors } = await authenticate.public(request);
+  return cors(json({}));
 };
 
-/**
- * Action responds to POST requests from the extension
- * Returns available offers for post-purchase upsell
- */
+// Der Action-Handler verarbeitet POST-Anfragen von der Extension
 export const action = async ({ request }) => {
   const { cors } = await authenticate.public(request);
 
   try {
     const offers = getOffers();
-    console.log("Available offers:", JSON.stringify(offers, null, 2));
-
-    // Kombiniere die CORS-Header mit denen, die von Shopify bereitgestellt werden
-    return cors(json({ offers }, { headers: corsHeaders }));
+    console.log("Verfügbare Angebote:", offers.length);
+    return cors(json({ offers }));
   } catch (error) {
-    console.error("Error fetching offers:", error);
+    console.error("Fehler beim Abrufen der Angebote:", error);
     return cors(
       json(
         {
-          errors: [{ code: "server_error", message: "Internal server error" }],
+          errors: [{ code: "server_error", message: "Interner Serverfehler" }],
         },
-        { status: 500, headers: corsHeaders },
+        { status: 500 },
       ),
     );
   }
